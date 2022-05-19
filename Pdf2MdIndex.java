@@ -20,22 +20,31 @@ public class Pdf2MdIndex {
         PdfReader reader = new PdfReader(inputPath);
         List<HashMap<String, Object>> bookmarkList = SimpleBookmark.getBookmark(reader);
         PrintWriter output = new PrintWriter(outputPath);
-        bookmarkList.forEach(bookmark -> writeBookmark(bookmark, output, 0));
+
+        int firstChapterIndex = 5;
+        for (int i = 0; i < bookmarkList.size(); i++) {
+            writeBookmark(bookmarkList.get(i), output, 0, i - firstChapterIndex, "");
+        }
         output.close();
     }
 
-    public static void writeBookmark(Map<String, Object> bookmark, PrintWriter output, int depth) {
-//        String named;
-//        if (((String) bookmark.get("Named")).startsWith("chapter*")) {
-//            named = "chapter.0";
-//        } else {
-//            named = (String) bookmark.get("Named");
-//        }
+    public static void writeBookmark(Map<String, Object> bookmark, PrintWriter output, int depth, int order, String prefix) {
+        String newPrefix;
+        if (prefix.isEmpty()) {
+            if (order <= 0) {
+                newPrefix = prefix + "0";
+            } else {
+                newPrefix = prefix + order;
+            }
+        } else {
+            newPrefix = prefix + "." + order;
+        }
         StringBuilder mdIndex = new StringBuilder()
 //                .append(" ".repeat(depth * 2))
                 .append("#".repeat(depth + 1))
                 .append(" ")
-//                .append(named)
+//                .append(getName(bookmark))
+                .append(newPrefix)
                 .append(" ")
                 .append(bookmark.get("Title"));
         System.out.println(mdIndex);
@@ -44,7 +53,18 @@ public class Pdf2MdIndex {
         if (kids == null) {
             return;
         }
-        kids.forEach(e -> writeBookmark(e, output, depth + 1));
+
+        for (int i = 0; i < kids.size(); i++) {
+            writeBookmark(kids.get(i), output, depth + 1, i + 1, newPrefix);
+        }
+    }
+
+    public static String getName(Map<String, Object> bookmark) {
+        if (((String) bookmark.get("Named")).startsWith("chapter*")) {
+            return "chapter.0";
+        } else {
+            return (String) bookmark.get("Named");
+        }
     }
 
 }
