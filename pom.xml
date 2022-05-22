@@ -6,7 +6,7 @@
 
     <groupId>dev.benkyou.utilities</groupId>
     <artifactId>pdf2md-index</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1</version>
 
     <dependencies>
         <dependency>

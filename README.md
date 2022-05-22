@@ -1,10 +1,14 @@
 # pdf2md-index
 
-## maven dependency
+package  
+```mvn package```
 
-    <dependency>
-        <groupId>com.itextpdf</groupId>
-        <artifactId>itextpdf</artifactId>
-        <version>5.5.11</version>
-    </dependency>
-    
+full package  
+```mvn assembly:assembly```
+
+run  
+```java -jar pdf2md-index-0.1-jar-with-dependencies.jar [filePath] <firstChapterIndex>```
+
+`firstChapterIndex` , witch is optional, means the index(starts from 1) of literal chapter 1 in the pdf doc  
+default 1
+

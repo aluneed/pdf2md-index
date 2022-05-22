@@ -9,21 +9,22 @@ import java.util.*;
 
 public class Pdf2MdIndex {
 
-    public static String getDesktopPath() {
-        return FileSystemView.getFileSystemView().getHomeDirectory().getPath();
-    }
-
     public static void main(String[] args) throws Exception {
-        String inputPath = getDesktopPath() + File.separator + "sicp.pdf";
-        String outputPath = getDesktopPath() + File.separator + "sicp-index.md";
+
+        String inputPath = args[0];
+        int firstChapterIndex = 1;
+        if (args.length == 2) {
+            firstChapterIndex = Integer.parseInt(args[1]);
+        }
+
+        String outputPath = inputPath.substring(0, inputPath.lastIndexOf(".")) + "-index.md";
 
         PdfReader reader = new PdfReader(inputPath);
         List<HashMap<String, Object>> bookmarkList = SimpleBookmark.getBookmark(reader);
         PrintWriter output = new PrintWriter(outputPath);
 
-        int firstChapterIndex = 5;
         for (int i = 0; i < bookmarkList.size(); i++) {
-            writeBookmark(bookmarkList.get(i), output, 0, i - firstChapterIndex, "");
+            writeBookmark(bookmarkList.get(i), output, 0, i - firstChapterIndex + 2, "");
         }
         output.close();
     }
