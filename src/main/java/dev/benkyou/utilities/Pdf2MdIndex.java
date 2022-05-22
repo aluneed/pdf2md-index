@@ -3,18 +3,26 @@ package dev.benkyou.utilities;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.SimpleBookmark;
 
-import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 import java.util.*;
 
 public class Pdf2MdIndex {
 
+    public static boolean generateSectionCode = true;
+
     public static void main(String[] args) throws Exception {
 
         String inputPath = args[0];
+
         int firstChapterIndex = 1;
-        if (args.length == 2) {
-            firstChapterIndex = Integer.parseInt(args[1]);
+
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.startsWith("--firstChapter=")) {
+                firstChapterIndex = Integer.parseInt(arg.substring(arg.lastIndexOf("=") + 1));
+            } else if (arg.startsWith("--noSectionCode")) {
+                generateSectionCode = false;
+            }
         }
 
         String outputPath = inputPath.substring(0, inputPath.lastIndexOf(".")) + "-index.md";
@@ -31,7 +39,9 @@ public class Pdf2MdIndex {
 
     public static void writeBookmark(Map<String, Object> bookmark, PrintWriter output, int depth, int order, String prefix) {
         String newPrefix;
-        if (prefix.isEmpty()) {
+        if (!generateSectionCode) {
+            newPrefix = "";
+        } else if (prefix.isEmpty()) {
             if (order <= 0) {
                 newPrefix = prefix + "0";
             } else {
